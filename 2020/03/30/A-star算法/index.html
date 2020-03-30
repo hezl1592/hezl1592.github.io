@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="Zilch,hezl1592@163.com"><title>A-star算法 · zilch个人博客</title><meta name="description" content="A*算法是一种很常用的路径查找和图形遍历算法。它有较好的性能和准确度。A*算法最初发表于1968年，由Stanford研究院的Peter Hart, Nils Nilsson以及Bertram Raphael发表。它可以被认为是Dijkstra算法的扩展。
+
+本文动图、内容来源：阿里云云栖号
+
+路径"><meta name="keywords" content="Hexo,HTML,CSS,车辆工程,Linux"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 4.2.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">zilch个人博客</a></h3><div class="description"><p>言念君子，温其如玉</p></div></div></div><ul class="social-links"><li><a href="https://weibo.com/5392460257/" target="_blank" rel="noopener"><i class="fa fa-weibo"></i></a></li><li><a href="https://github.com/hezl1592" target="_blank" rel="noopener"><i class="fa fa-github"></i></a></li></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a href="https://www.caicai.me" target="_blank" rel="noopener"> CaiCai </a><span>&</span><a href="https://github.com/Ben02/hexo-theme-Anatole" target="_blank" rel="noopener"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/about">关于</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img src="/images/favicon.png"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>A-star算法</a></h3></div><div class="post-content"><p>A*算法是一种很常用的路径查找和图形遍历算法。它有较好的性能和准确度。A*算法最初发表于1968年，由Stanford研究院的Peter Hart, Nils Nilsson以及Bertram Raphael发表。它可以被认为是Dijkstra算法的扩展。</p>
+<blockquote>
+<p>本文动图、内容来源：<a href="https://www.jianshu.com/u/12532d36e4da" target="_blank" rel="noopener">阿里云云栖号</a></p>
+</blockquote>
+<h3 id="路径规划的一些算法"><a href="#路径规划的一些算法" class="headerlink" title="路径规划的一些算法"></a>路径规划的一些算法</h3><ol>
+<li>广度优先搜索算法</li>
+</ol>
+<p>BFS（Breadth first search）从起点开始，首先遍历起点周围临近点，然后在遍历已经遍历过的点未访问过的临近点，逐步向外扩散，直到找到终点。BFS以广度为优先级进行搜索。</p>
+<p><img src="BFS" alt="图片加载中"></p>
+<ol start="2">
+<li>dijkstra算法</li>
+</ol>
+<p>Dijkstra算法用来寻找图形中节点之间的最短路径。Dijkstra算法可以视作BFS算法的带权版本，增加了路径代价的概念。算法执行过程中，每次都从优先级队列中选出代价最小的作为下一个点，直到到达终点。</p>
+<p><img src="dijkstra" alt></p>
+<ol start="3">
+<li>最佳优先搜索</li>
+</ol>
+<p>在一些情况下，如果我们可以预先计算出每个节点到终点的距离，则我们可以利用这个信息更快的到达终点。</p>
+<p>与Dijkstra算法类似，我们也使用一个优先队列，但此时以每个节点到达终点的距离作为优先级，每次始终选取到终点移动代价最小（离终点最近）的节点作为下一个遍历的节点。这种算法称之为最佳优先（Best First）算法。</p>
+<p><img src="bestfs_good" alt></p>
+<p>但是这样也会出现不良情况，如果起点和终点之间存在障碍物，则最佳优先算法找到的很可能不是最短路径，下图描述了这种情况。</p>
+<p><img src="bestfs_bad" alt></p>
+<h3 id="A-算法"><a href="#A-算法" class="headerlink" title="A*算法"></a>A*算法</h3><p>A*算法实际上是综合上面这些算法的特点于一身的。</p>
+<p>A*算法通过下面这个函数来计算每个节点的优先级。</p>
+<p><code>f(n)=g(n)+h(n)</code></p>
+<p>在上式中：</p>
+<ul>
+<li><code>f(n)</code>为节点n的综合优先级；</li>
+<li><code>g(n)</code>为节点n距离起点的代价；</li>
+<li><code>h(n)</code>为节点n距离终点的预计代价。</li>
+</ul>
+<p>上式即为A*算法的启发函数。A*算法在运算过程中，每次从优先队列中选取f(n)值最小（优先级最高）的节点作为下一个待遍历的节点。</p>
+<p>另外，A*算法使用两个集合来表示待遍历的节点，与已经遍历过的节点，这通常称之为<code>open_set</code>和<code>close_set</code>。完整的A*算法描述如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">* 初始化open_set和close_set；</span><br><span class="line">* 将起点加入open_set中，并设置优先级为0（优先级最高）；</span><br><span class="line">* 如果open_set不为空，则从open_set中选取优先级最高的节点n：</span><br><span class="line">    * 如果节点n为终点，则：</span><br><span class="line">        * 从终点开始逐步追踪parent节点，一直达到起点；</span><br><span class="line">        * 返回找到的结果路径，算法结束；</span><br><span class="line">    * 如果节点n不是终点，则：</span><br><span class="line">        * 将节点n从open_set中删除，并加入close_set中；</span><br><span class="line">        * 遍历节点n所有的邻近节点：</span><br><span class="line">            * 如果邻近节点m在close_set中，则：</span><br><span class="line">                * 跳过，选取下一个邻近节点</span><br><span class="line">            * 如果邻近节点m也不在open_set中，则：</span><br><span class="line">                * 设置节点m的parent为节点n</span><br><span class="line">                * 计算节点m的优先级</span><br><span class="line">                * 将节点m加入open_set中</span><br></pre></td></tr></table></figure>
+
+<p>上面已经提到，启发函数会影响A*算法的行为。</p>
+<ul>
+<li>在极端情况下，当启发函数h(n)始终为0，则将由g(n)决定节点的优先级，此时<strong>算法就退化成了Dijkstra算法</strong>。</li>
+<li>如果h(n)始终小于等于节点n到终点的代价，则A*算法保证一定能够找到最短路径。但是当h(n)的值越小，算法将遍历越多的节点，也就导致算法越慢。</li>
+<li>如果h(n)完全等于节点n到终点的代价，则A*算法将找到最佳路径，并且速度很快。可惜的是，并非所有场景下都能做到这一点。因为在没有达到终点之前，我们很难确切算出距离终点还有多远。</li>
+<li>如果h(n)的值比节点n到终点的代价要大，则A*算法不能保证找到最短路径，不过此时会很快。</li>
+<li>在另外一个极端情况下，如果h(n)相较于g(n)大很多，则此时只有h(n)产生效果，这也就变成了最佳优先搜索。</li>
+</ul>
+<p>由上面这些信息我们可以知道，通过调节启发函数我们可以控制算法的速度和精确度。因为在一些情况，我们可能未必需要最短路径，而是希望能够尽快找到一个路径即可。这也是A*算法比较灵活的地方。</p>
+<p>对于网格形式的图，有以下这些启发函数可以使用：</p>
+<ul>
+<li>如果图形中只允许朝上下左右四个方向移动，则可以使用曼哈顿距离（Manhattan distance）。<code>C</code>为移动代价</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cost</span><span class="params">(node)</span>:</span></span><br><span class="line">    dx = abs(node.x - goal.x)</span><br><span class="line">    dy = abs(node.y - goal.y)</span><br><span class="line">    <span class="keyword">return</span> C * (dx+dy)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果图形中允许朝八个方向移动，则可以使用对角距离。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cost</span><span class="params">(node)</span>:</span></span><br><span class="line">    dx = abs(node.x - goal.x)</span><br><span class="line">    dy = abs(node.y - goal.y)</span><br><span class="line">    <span class="keyword">return</span> D * (dx + dy) + (D2 - <span class="number">2</span> * D) * min(dx, dy)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果图形中允许朝任何方向移动，则可以使用欧几里得距离（Euclidean distance）。</li>
+</ul>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2020-03-30</span><i class="fa fa-tag"></i><a class="tag" href="/tags/A/" title="A*">A* </a><a class="tag" href="/tags/路径规划/" title="路径规划">路径规划 </a><a class="tag" href="/tags/算法/" title="算法">算法 </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" href="http://twitter.com/home?status=,http://yoursite.com/2020/03/30/A-star算法/,zilch个人博客,A-star算法,;" target="_blank" rel="noopener"></a></div></div><div class="pagination"><ul class="clearfix"><li class="next pagbuttons"><a class="btn" role="navigation" href="/2020/03/30/Dijkstra%E7%AE%97%E6%B3%95/" title="Dijkstra算法">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
