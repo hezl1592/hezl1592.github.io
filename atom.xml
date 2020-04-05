@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-04-03T05:20:50.053Z</updated>
+  <updated>2020-04-05T13:21:09.773Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>C++ | IO标准库&amp;文件操作</title>
+    <link href="http://yoursite.com/2020/04/05/C++_%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%96%87%E4%BB%B6/"/>
+    <id>http://yoursite.com/2020/04/05/C++_%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%96%87%E4%BB%B6/</id>
+    <published>2020-04-05T07:43:33.000Z</published>
+    <updated>2020-04-05T13:21:09.773Z</updated>
+    
+    <content type="html"><![CDATA[<p>I/O（Input/Output），C++语言不直接处理输入输出，而是通过一族定义在标准库中的类型来处理IO。</p><p>这些类型支持从设备读取数据、向设备写入数据的IO操作，设备可以是文件、控制台窗口等。</p><p>为了支持不同类型的IO处理操作，C++的IO类型定义在三个独立的头文件中：（w:宽字符）</p><ul><li>iostream定义了用于读写流的基本类型；<ul><li>istream，wistream从流读取数据</li><li>ostream, wostream向流写入数据</li><li>iostream，wiostream读写流</li></ul></li><li>fstream定义了读写命名文件的类型；<ul><li>ifstream, wifstream从文件读取数据</li><li>ofstream, wofstream项文件写入数据</li><li>fstream,wfstream读写文件</li></ul></li><li>sstream定义了读写内存string对象的类型。<ul><li>istringstream,wistringstream从string读取数据</li><li>ostringstream，wostringstream向string写入数据</li><li>stringstream，wstringstream读写string</li></ul></li></ul><h3 id="1-使用cout进行输出"><a href="#1-使用cout进行输出" class="headerlink" title="1. 使用cout进行输出"></a>1. 使用cout进行输出</h3><p><code>&lt;&lt;</code>运算符的默认含义是按位左移运算符，ostream类将<code>&lt;&lt;</code>重载为输出，在这种情况下，<code>&lt;&lt;</code>被称为插入运算符，能都识别C++中<strong>所有的基本类型</strong>。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span> &lt;&lt; <span class="number">88</span>;</span><br><span class="line">ostream &amp; <span class="keyword">operator</span>&lt;&lt;(<span class="keyword">int</span>);</span><br></pre></td></tr></table></figure><ul><li><p>输出与指针</p><p>ostream类为下面的指针类型定义了插入运算符函数：</p><ul><li>const signed char *;</li><li>const unsigned char *;</li><li>const char *;</li><li>void *;</li></ul><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> eggs = <span class="number">12</span>;</span><br><span class="line"><span class="keyword">char</span> *amount = <span class="string">"dozen"</span>;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; &amp;eggs &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; amount &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; (<span class="keyword">void</span> *)amount &lt;&lt; <span class="built_in">endl</span>;<span class="comment">//字符串的地址</span></span><br></pre></td></tr></table></figure></li><li><p>拼接输出</p><p>插入运算符的返回类型都是ostream &amp;。</p><p>因此:<code>cout&lt;&lt;a&lt;&lt;b&lt;&lt;endl;</code></p></li><li><p>其他ostream方法</p><p>ostream类还提供了<code>put()</code>和<code>write()</code>方法，前者用于显示<strong>字符</strong>，后者用于显示<strong>字符串</strong>；</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span>.<span class="built_in">put</span>(<span class="string">'W'</span>).<span class="built_in">put</span>(<span class="number">65</span>).<span class="built_in">put</span>(<span class="string">'\n'</span>); <span class="comment">//显示字符:WA</span></span><br><span class="line"><span class="built_in">cout</span>.<span class="built_in">write</span>(<span class="string">"Hezil"</span>, <span class="number">3</span>);      <span class="comment">//显示字符串:Hez</span></span><br></pre></td></tr></table></figure></li><li><p>endl, ends, flush;</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span> &lt;&lt; <span class="string">"hello"</span> &lt;&lt; ends &lt;&lt; <span class="string">"world"</span> &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span> &lt;&lt; <span class="string">"hello"</span> &lt;&lt; <span class="built_in">flush</span> &lt;&lt; <span class="string">"world"</span> &lt;&lt;<span class="built_in">endl</span>;</span><br></pre></td></tr></table></figure></li></ul><h3 id="2-使用cin进行输入"><a href="#2-使用cin进行输入" class="headerlink" title="2. 使用cin进行输入"></a>2. 使用cin进行输入</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">istream &amp; <span class="keyword">operator</span>&gt;&gt;(<span class="keyword">int</span> &amp;);</span><br></pre></td></tr></table></figure><p><code>istream</code>类还为下列字符指针类型重载了&gt;&gt;抽取运算符；</p><ul><li>signed char *;</li><li>char *;</li><li>unsigned char *;</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;I/O（Input/Output），C++语言不直接处理输入输出，而是通过一族定义在标准库中的类型来处理IO。&lt;/p&gt;
+&lt;p&gt;这些类型支持从设备读取数据、向设备写入数据的IO操作，设备可以是文件、控制台窗口等。&lt;/p&gt;
+&lt;p&gt;为了支持不同类型的IO处理操作，C++的IO类型
+      
+    
+    </summary>
+    
+    
+    
+      <category term="C++" scheme="http://yoursite.com/tags/C/"/>
+    
+      <category term="基础" scheme="http://yoursite.com/tags/%E5%9F%BA%E7%A1%80/"/>
+    
+  </entry>
   
   <entry>
     <title>C++ | 类大小问题(size of Class)</title>
@@ -170,11 +198,11 @@
     
     
     
-      <category term="A*" scheme="http://yoursite.com/tags/A/"/>
-    
       <category term="路径规划" scheme="http://yoursite.com/tags/%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92/"/>
     
       <category term="算法" scheme="http://yoursite.com/tags/%E7%AE%97%E6%B3%95/"/>
+    
+      <category term="A*" scheme="http://yoursite.com/tags/A/"/>
     
   </entry>
   
@@ -198,11 +226,11 @@
     
     
     
+      <category term="Dijkstra" scheme="http://yoursite.com/tags/Dijkstra/"/>
+    
       <category term="路径规划" scheme="http://yoursite.com/tags/%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92/"/>
     
       <category term="算法" scheme="http://yoursite.com/tags/%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="Dijkstra" scheme="http://yoursite.com/tags/Dijkstra/"/>
     
   </entry>
   
