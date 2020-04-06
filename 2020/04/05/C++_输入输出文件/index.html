@@ -25,6 +25,17 @@ iostr"><meta name="keywords" content="博客,Hexo,车辆工程,Linux"><meta cont
 </ul>
 </li>
 </ul>
+<p><strong>常见IO对象</strong>：</p>
+<ul>
+<li><p><code>cin</code>，一个istream对象，从标准输入读取数据。</p>
+</li>
+<li><p><code>cout</code>，一个ostream对象，从标准输出写入数据。</p>
+</li>
+<li><p><code>cerr</code>，一个ostream对象，用于输出错误消息。</p>
+</li>
+<li><p><code>getline</code>函数，从一个给定的输入流读取一行数据存入string对象。</p>
+</li>
+</ul>
 <h3 id="1-使用cout进行输出"><a href="#1-使用cout进行输出" class="headerlink" title="1. 使用cout进行输出"></a>1. 使用cout进行输出</h3><p><code>&lt;&lt;</code>运算符的默认含义是按位左移运算符，ostream类将<code>&lt;&lt;</code>重载为输出，在这种情况下，<code>&lt;&lt;</code>被称为插入运算符，能都识别C++中<strong>所有的基本类型</strong>。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cout</span> &lt;&lt; <span class="number">88</span>;</span><br><span class="line">ostream &amp; <span class="keyword">operator</span>&lt;&lt;(<span class="keyword">int</span>);</span><br></pre></td></tr></table></figure>
 
@@ -60,4 +71,95 @@ iostr"><meta name="keywords" content="博客,Hexo,车辆工程,Linux"><meta cont
 <li>char *;</li>
 <li>unsigned char *;</li>
 </ul>
-</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2020-04-05</span><i class="fa fa-tag"></i><a class="tag" href="/tags/C/" title="C++">C++ </a><a class="tag" href="/tags/基础/" title="基础">基础 </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" href="http://twitter.com/home?status=,http://yoursite.com/2020/04/05/C++_输入输出文件/,zilch个人博客,C++ | IO标准库&amp;文件操作,;" target="_blank" rel="noopener"></a></div></div><div class="pagination"><ul class="clearfix"><li class="next pagbuttons"><a class="btn" role="navigation" href="/2020/04/03/C++_%E7%B1%BB%E5%A4%A7%E5%B0%8F%E9%97%AE%E9%A2%98/" title="C++ | 类大小问题(size of Class)">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> val;</span><br><span class="line"><span class="keyword">while</span>(<span class="built_in">cin</span>&gt;&gt;val)	<span class="comment">//判断输入是否为int类型</span></span><br><span class="line">&#123; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>流状态</p>
+<p><code>cin</code>或者<code>cout</code>包含一个描述流状态（stream state）的数据成员（从<code>ios_base</code>类继承而来），由三个<code>ios_base</code>元素组成：<code>eofbit</code>、<code>badbit</code>、<code>failbit</code>。</p>
+<ul>
+<li><p><code>eofbit</code></p>
+<p>如果到达文件尾，则设置为1</p>
+</li>
+<li><p><code>badbit</code></p>
+<p>如果流被破坏，则设置为1，例如：文件读取错误</p>
+</li>
+<li><p><code>failbit</code></p>
+<p>如果输入操作未能读取预期的字符或输出操作没有写入预期的字符，则设置为1；</p>
+</li>
+</ul>
+<p><strong>设置流状态：</strong></p>
+<ul>
+<li><pre><code class="c++"><span class="built_in">clear</span>();    <span class="comment">//清楚全部三个状态位</span>
+<span class="built_in">clear</span>(eofbit);
+setstate(eofbit);
+&lt;!--￼<span class="number">6</span>--&gt;</code></pre>
+</li>
+</ul>
+</li>
+<li><p>其他istream方法</p>
+<ul>
+<li><p>单字符输入</p>
+<ul>
+<li><code>get(char &amp;)</code>，返回类型为<code>istream &amp;</code>, 到达文件尾的返回值转化为false</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> ch,ch1;</span><br><span class="line"><span class="built_in">cin</span>.<span class="built_in">get</span>(ch).<span class="built_in">get</span>(ch1);</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> ch;</span><br><span class="line"><span class="keyword">while</span>(<span class="built_in">cin</span>.<span class="built_in">get</span>(ch))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//process input;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>get(void)</code>，返回类型为<code>int</code></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> ch;	<span class="comment">//or char ch</span></span><br><span class="line">ch = <span class="built_in">cin</span>.<span class="built_in">get</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> ch;</span><br><span class="line"><span class="keyword">while</span>((ch=<span class="built_in">cin</span>.<span class="built_in">get</span>())!=EOF)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//process</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>字符串输入</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">istream &amp; <span class="title">get</span><span class="params">(<span class="keyword">char</span> *, <span class="keyword">int</span>, <span class="keyword">char</span>)</span></span>;</span><br><span class="line"><span class="function">istream &amp; <span class="title">get</span><span class="params">(<span class="keyword">char</span> *, <span class="keyword">int</span>)</span></span>;</span><br><span class="line">  </span><br><span class="line"><span class="function">istream &amp; <span class="title">getline</span><span class="params">(<span class="keyword">char</span> *, <span class="keyword">int</span>, <span class="keyword">char</span>)</span></span>;</span><br><span class="line"><span class="function">istream &amp; <span class="title">getline</span><span class="params">(<span class="keyword">char</span> *, <span class="keyword">int</span>)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>第一个参数适用于放置输入字符串的内存单元地址，第二个参数比要读取的最大字符数大一（额外的一个字符用于存储结尾的空字符串），第三个参数指定用作分界符的字符，只有两个参数的版本将换行符作为默认分界符。</p>
+<ul>
+<li><code>getline()</code></li>
+<li><code>get()</code></li>
+<li><code>ignore()</code></li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">istream &amp; <span class="title">ignore</span><span class="params">(<span class="keyword">int</span> =<span class="number">1</span>, <span class="keyword">int</span> = EOF)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>​    默认参数<strong>EOF</strong>导致<code>ignore()</code>读取指定数目的字符或读取到文件未。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-文件输入和输出"><a href="#3-文件输入和输出" class="headerlink" title="3. 文件输入和输出"></a>3. 文件输入和输出</h3><ul>
+<li><p>写入文件流程</p>
+<ol>
+<li>创建一个<code>ofstream</code>对象来管理输出流；</li>
+<li>将该对象与特定的文件关联起来；</li>
+<li>以使用<code>cout</code>的方式使用该对象，唯一的区别是输出将进文件而不是屏幕；</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ofstream fout;</span><br><span class="line">fout.<span class="built_in">open</span>(<span class="string">"jar.txt"</span>);</span><br><span class="line"></span><br><span class="line"><span class="function">ofstream <span class="title">fout</span><span class="params">(<span class="string">"jar.txt"</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">fout.<span class="built_in">close</span>()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>读取文件流程</p>
+<ol>
+<li>创建一个<code>ifstream</code>对象来管理输入流；</li>
+<li>将对象与特定的文件关联；</li>
+<li>以使用<code>cin</code>的方式使用该对象；</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ifstream fin;</span><br><span class="line">fin.<span class="built_in">open</span>(<span class="string">"jar.txt"</span>);</span><br><span class="line"></span><br><span class="line"><span class="function">ifstream <span class="title">fin</span><span class="params">(<span class="string">"jar.txt"</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">fin.<span class="built_in">close</span>();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>检查文件是否被打开：</p>
+<p><code>if (fin.is_open())</code></p>
+</li>
+<li><p><strong>文件模式</strong></p>
+<p>文件模式描述的是文件将被如何使用：读、写、追加等。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ifstream <span class="title">fin</span><span class="params">(<span class="string">"filename"</span>, mode)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">ofstream <span class="title">fout</span><span class="params">(<span class="string">"filename"</span>, mode)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>文件模式常量</strong></p>
+<ul>
+<li><code>ios_base::in</code>：打开文件，以便读取。</li>
+<li><code>ios_base::out</code>：打开文件，以便写入</li>
+<li><code>os_base::ate</code>：打开文件，并移到文件尾</li>
+<li><code>ios_base::app</code>：追加到文件尾</li>
+<li><code>ios_base::binary</code>：二进制文件</li>
+<li><code>ios_base::trunc</code>：如果文件存在，则截短文件(以前的内容将被删除)；</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ofstream <span class="title">fout</span><span class="params">(<span class="string">"jas.txt"</span>, ios_base::out | ios_base::app)</span></span>;</span><br><span class="line"><span class="comment">//合并模式，启用out和app模式</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="暂时写到这里，其实这里的知识很多很复杂…"><a href="#暂时写到这里，其实这里的知识很多很复杂…" class="headerlink" title="暂时写到这里，其实这里的知识很多很复杂…"></a>暂时写到这里，其实这里的知识很多很复杂…</h3></div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2020-04-05</span><i class="fa fa-tag"></i><a class="tag" href="/tags/C/" title="C++">C++ </a><a class="tag" href="/tags/基础/" title="基础">基础 </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" href="http://twitter.com/home?status=,http://yoursite.com/2020/04/05/C++_输入输出文件/,zilch个人博客,C++ | IO标准库&amp;文件操作,;" target="_blank" rel="noopener"></a></div></div><div class="pagination"><ul class="clearfix"><li class="next pagbuttons"><a class="btn" role="navigation" href="/2020/04/03/C++_%E7%B1%BB%E5%A4%A7%E5%B0%8F%E9%97%AE%E9%A2%98/" title="C++ | 类大小问题(size of Class)">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
