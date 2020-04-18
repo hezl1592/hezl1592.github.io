@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-04-12T06:56:29.365Z</updated>
+  <updated>2020-04-18T08:20:30.873Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>C++ | 多线程</title>
+    <link href="http://yoursite.com/2020/04/18/C++_%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
+    <id>http://yoursite.com/2020/04/18/C++_%E5%A4%9A%E7%BA%BF%E7%A8%8B/</id>
+    <published>2020-04-18T04:20:00.000Z</published>
+    <updated>2020-04-18T08:20:30.873Z</updated>
+    
+    <content type="html"><![CDATA[<p>多线程是多任务处理的一种特殊形式，多任务处理允许让电脑同时运行两个或两个以上的程序。一般情况下，两种类型的多任务处理：<strong>基于进程和基于线程</strong>。</p><ul><li>基于进程的多任务处理是程序的并发执行。</li><li>基于线程的多任务处理是同一程序的片段的并发执行。</li></ul><h3 id="1-posix"><a class="markdownIt-Anchor" href="#1-posix"></a> 1. POSIX</h3><p>POSIX Threads 或 Pthreads 提供的 API 可在多种类 Unix POSIX 系统上可用，比如 FreeBSD、NetBSD、GNU/Linux、Mac OS X 和 Solaris。</p><ul><li><p><strong>创建线程</strong></p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"pthread.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数原型</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_create</span><span class="params">(<span class="keyword">pthread_t</span> *th, <span class="keyword">const</span> <span class="keyword">pthread_attr_t</span> *attr, <span class="keyword">void</span> *(* func)(<span class="keyword">void</span> *), <span class="keyword">void</span> *arg)</span></span>;</span><br></pre></td></tr></table></figure><p><code>pthread_create</code>创建一个新的线程，并让它可执行。</p><ul><li><p>返回值：成功创建为0；</p></li><li><p>参数：</p><ul><li><code>th</code>：指向线程标识符的指针；</li><li><code>attr</code>：用于设置线程属性，可以使用默认值<code>NULL</code>;</li><li><code>func</code>：线程运行函数起始地址，一旦线程被创建就会执行；</li><li><code>arg</code>：运行函数的参数，它必须通过把引用作为指针强制转换为 void 类型进行传递。如果没有传递参数，则使用 NULL。</li></ul></li></ul></li><li><p><strong>终止线程</strong></p><p>如果需要只终止某个线程而不终止整个进程，可以有三种方法：</p><ol><li>从线程函数<code>return</code>。这种方法对主线程不适用，从main函数return相当于调用 exit 。</li><li>一个线程可以调用<code>pthread_cancel</code>终止同一进程中的另一个线程。</li><li>线程可以调用<code>pthread_exit</code>终止自己。</li></ol><p>使用下面的程序，我们可以用它来终止一个 POSIX 线程：</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 函数原型</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">pthread_exit</span><span class="params">(<span class="keyword">void</span> *res)</span></span>;</span><br></pre></td></tr></table></figure><p><code>res</code>是<code>void *</code>类型，和线程函数返回值的用法一样，其它线程可以调用<code>pthread_join</code>获得这个指针。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_join</span><span class="params">(<span class="keyword">pthread_t</span> t, <span class="keyword">void</span> **res)</span></span>;</span><br></pre></td></tr></table></figure><p>调用该函数的线程将挂起等待，直到id为<code>t</code>的线程终止。<code>t</code>线程以不同的方法终止，通过<code>pthread_join</code>得到的终止状态是不同的，总结如下：</p><ol><li>如果<code>t</code>线程通过<code>return</code>返回， <code>res</code>所指向的单元里存放的是 <code>t</code>线程函数的返回值。</li><li>如果<code>t</code>线程被别的线程调用<code>pthread_cancel</code>异常终止掉， <code>res</code> 所指向的单元里存放的是常数<code>PTHREAD_CANCELED</code>。</li><li>如果<code>t</code>线程是自己调用<code>pthread_exit</code>终止的，<code>res</code>所指向的单元存放的是传给<code>pthread_exit</code>的参数。</li></ol></li><li><p><strong>创建与退出线程示例</strong></p><ul><li><p><a href="https://github.com/hezl1592/CCC-/blob/master/7_thread/0_pthread/pthread_1.cpp" target="_blank" rel="noopener">代码示例1</a></p><p><strong>输出：</strong></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">main thread: pid 26709 tid 3731060480 (0xde637700)</span><br><span class="line">new thread:  pid 26709 tid 3722659584 (0xdde34700)</span><br></pre></td></tr></table></figure></li><li><p><a href="https://github.com/hezl1592/CCC-/blob/master/7_thread/0_pthread/pthread_2.cpp" target="_blank" rel="noopener">代码示例2</a></p><p><strong>输出：</strong></p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">thread 1 returning</span><br><span class="line">thread 1 exit code 1</span><br><span class="line">thread 2 exiting</span><br><span class="line">thread 2 exit code 2</span><br><span class="line">thread 3 writing</span><br><span class="line">thread 3 writing</span><br><span class="line">thread 3 writing</span><br><span class="line">thread 3 exit code -1</span><br></pre></td></tr></table></figure></li></ul></li><li><p><strong>向线程传递参数</strong></p><p>向线程传递参数时，涉及数据类型转化，记得进行转化。</p><ul><li><a href="https://github.com/hezl1592/CCC-/blob/master/7_thread/0_pthread/pthread_3.cpp" target="_blank" rel="noopener">代码示例</a></li></ul></li><li><p><strong>线程同步</strong></p><p>线程的最大特点是资源的共享性，但资源共享中的同步问题是多线程编程的难点。linux下提供了多种方式来处理线程同步，最常用的是互斥锁、条件变量和信号量。</p><p><a href="https://github.com/hezl1592/CCC-/tree/master/7_thread/0_pthread/pthread_4" target="_blank" rel="noopener">代码示例</a></p><ul><li><p><strong>互斥锁（mutex）</strong></p><p>通过锁机制实现线程间的同步。同一时刻只允许一个线程执行一个关键部分的代码。</p></li><li><p><strong>条件变量（condition Variable）</strong></p></li><li><p><strong>信号量（Semaphore）</strong></p></li></ul></li><li><p>未完待续</p></li><li></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;多线程是多任务处理的一种特殊形式，多任务处理允许让电脑同时运行两个或两个以上的程序。一般情况下，两种类型的多任务处理：&lt;strong&gt;基于进程和基于线程&lt;/strong&gt;。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;基于进程的多任务处理是程序的并发执行。&lt;/li&gt;
+&lt;li&gt;基于线程的多任务
+      
+    
+    </summary>
+    
+    
+    
+      <category term="C++" scheme="http://yoursite.com/tags/C/"/>
+    
+      <category term="多线程" scheme="http://yoursite.com/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"/>
+    
+  </entry>
   
   <entry>
     <title>Linux | Linux指令</title>
