@@ -4,7 +4,7 @@
 基于线程的多任务处理是同一程序的片段的并发执行。
 
  1. POSIX
-POSIX Threads 或 Pthread"><meta name="keywords" content="博客,Hexo,车辆工程,Linux"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.bootcss.com/KaTeX/0.7.1/katex.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 4.2.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">zilch个人博客</a></h3><div class="description"><p>言念君子，温其如玉</p></div></div></div><ul class="social-links"><li><a href="https://github.com/hezl1592" target="_blank" rel="noopener"><i class="fa fa-github"></i></a></li></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a href="https://www.caicai.me" target="_blank" rel="noopener"> CaiCai </a><span>&</span><a href="https://github.com/Ben02/hexo-theme-Anatole" target="_blank" rel="noopener"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/about">关于</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img src="/images/favicon.png"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>C++ | 多线程</a></h3></div><div class="post-content"><p>多线程是多任务处理的一种特殊形式，多任务处理允许让电脑同时运行两个或两个以上的程序。一般情况下，两种类型的多任务处理：<strong>基于进程和基于线程</strong>。</p>
+POSIX Threads 或 Pthread"><meta name="keywords" content="博客,Hexo,车辆工程,Linux"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.bootcss.com/KaTeX/0.7.1/katex.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 4.2.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">zilch个人博客</a></h3><div class="description"><p>言念君子，温其如玉</p></div></div></div><ul class="social-links"><li><a href="https://github.com/hezl1592" target="_blank" rel="noopener"><i class="fa fa-github"></i></a></li><p><a href="https://github.com/hezl1592" target="_blank" rel="noopener"><img src="https://ghchart.rshah.org/hezl1592" width="70%"></a></p></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a href="https://www.caicai.me" target="_blank" rel="noopener"> CaiCai </a><span>&</span><a href="https://github.com/Ben02/hexo-theme-Anatole" target="_blank" rel="noopener"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/tags">标签</a></li><li><a href="/about">关于</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img src="/images/favicon.png"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>C++ | 多线程</a></h3></div><div class="post-content"><p>多线程是多任务处理的一种特殊形式，多任务处理允许让电脑同时运行两个或两个以上的程序。一般情况下，两种类型的多任务处理：<strong>基于进程和基于线程</strong>。</p>
 <ul>
 <li>基于进程的多任务处理是程序的并发执行。</li>
 <li>基于线程的多任务处理是同一程序的片段的并发执行。</li>
@@ -80,12 +80,54 @@ POSIX Threads 或 Pthread"><meta name="keywords" content="博客,Hexo,车辆工�
 <li>
 <p><strong>互斥锁（mutex）</strong></p>
 <p>通过锁机制实现线程间的同步。同一时刻只允许一个线程执行一个关键部分的代码。</p>
+<p>互斥锁是通过锁的机制来实现线程间的同步问题。互斥锁的基本流程为：</p>
+<ul>
+<li>
+<p>定义，初始化一个互斥锁</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pthread_mutex_t</span> mutex;	<span class="comment">//声明</span></span><br><span class="line"><span class="keyword">int</span> a = pthread_mutex_init(&amp;counter_mutex, <span class="literal">NULL</span>);	<span class="comment">//初始化</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>加锁：<code>pthread_mutex_lock()</code>函数或</p>
+</li>
+<li>
+<p><code>pthread_mutex_trylock()</code>函数</p>
+</li>
+<li>
+<p>对共享资源的操作</p>
+</li>
+<li>
+<p>解锁：<code>pthread_mutex_unlock()</code>函数</p>
+</li>
+<li>
+<p>注销互斥锁：<code>pthread_mutex_destory()</code>函数</p>
+</li>
+</ul>
 </li>
 <li>
 <p><strong>条件变量（condition Variable）</strong></p>
+<ul>
+<li>
+<p>定义、初始化</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pthread_cond_t</span> cond;</span><br><span class="line"><span class="keyword">int</span> res = pthread_cond_init(&amp;cond, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>等待条件变量</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> res = pthread_cond_wait(&amp;cond, &amp;mutex);</span><br></pre></td></tr></table></figure>
+<p>**参数说明：**cond 条件变量地址，mutex互斥锁地址，表示锁等待在条件变量上.</p>
+</li>
+<li>
+<p>唤醒等待条件变量上的线程</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_signal</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond)</span></span>;               <span class="comment">//唤醒等待该条件变量上的某个线程</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_broadcast</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond)</span></span>;         <span class="comment">//唤醒等待该条件变量上的所有线程</span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>销毁条件变量：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_cond_destroy</span><span class="params">(<span class="keyword">pthread_cond_t</span> *cond)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
 </li>
 <li>
 <p><strong>信号量（Semaphore）</strong></p>
+<p>这里先不介绍…</p>
 </li>
 </ul>
 </li>
