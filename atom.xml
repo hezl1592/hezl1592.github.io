@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-06-23T07:16:21.990Z</updated>
+  <updated>2020-06-27T09:54:44.406Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,39 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>开发 | Python与Matlab间建立TCP通信</title>
+    <link href="http://yoursite.com/2020/06/27/%E5%BC%80%E5%8F%91_Python_Matlab_TCP%E9%80%9A%E4%BF%A1/"/>
+    <id>http://yoursite.com/2020/06/27/%E5%BC%80%E5%8F%91_Python_Matlab_TCP%E9%80%9A%E4%BF%A1/</id>
+    <published>2020-06-27T09:01:58.000Z</published>
+    <updated>2020-06-27T09:54:44.406Z</updated>
+    
+    <content type="html"><![CDATA[<p>在最近的项目中，MATLAB/Simulink需要用到Python语言搭建的深度学习算法检测结果进行仿真，在最简单的利用mat文件进行离线仿真的基础上，经过一系列的调研，决定使用TCP通信进行数据的传输。</p><p>以前通过一个简单的例子实现Python与Matlab的简单TCP通信。具体思路如下：</p><ul><li>利用python搭建服务端，一旦有客户端连接上，并且受到发送请求，便发送一个数据过去，关闭连接；</li><li>Matlab中搭建客户端，连接服务端成功后发送请求，后接收数据，关闭连接；</li><li>本示例中，利用python服务端向matlab客户端发送正弦波；</li></ul><p>首先是利用Python搭建出TCP服务端（server）：</p><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">tcpServer = socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">tcpServer.bind((<span class="string">'127.0.0.1'</span>,<span class="number">5432</span>))</span><br><span class="line"><span class="comment">#一共可以有5+1个客户端和服务器连接</span></span><br><span class="line">tcpServer.listen(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">precent = <span class="number">0.1</span></span><br><span class="line">step = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    s=str(math.sin(step*precent))</span><br><span class="line">    <span class="comment"># 等待客户请求</span></span><br><span class="line">    connection,address = tcpServer.accept()</span><br><span class="line">    <span class="comment"># 打印客户端地址</span></span><br><span class="line">    print(<span class="string">"client ip is:"</span>,address)</span><br><span class="line">    buf = connection.recv(<span class="number">40960</span>)</span><br><span class="line">    <span class="keyword">if</span> buf.decode(<span class="string">'utf-8'</span>) == <span class="string">'yes'</span>:</span><br><span class="line">        <span class="comment"># 发送数据</span></span><br><span class="line">        connection.send(bytes(s, encoding=<span class="string">"utf-8"</span>))</span><br><span class="line">        print(<span class="string">"&#123;:3d&#125;,send:\t&#123;&#125;"</span>.format(step, s))</span><br><span class="line">        step += <span class="number">1</span></span><br><span class="line">    connection.close()</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line"> <span class="comment"># 关闭服务器</span></span><br><span class="line">tcpServer.close()</span><br></pre></td></tr></table></figure><p>Matlab中搭建客户端，在Matlab中利用编写以下脚本：</p><figure class="highlight matlab"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">clc;</span><br><span class="line">clear;</span><br><span class="line"></span><br><span class="line">tcpclient = tcpip(<span class="string">'127.0.0.1'</span>, <span class="number">5432</span>, <span class="string">'Timeout'</span>, <span class="number">60</span>,<span class="string">'OutputBufferSize'</span>,<span class="number">10240</span>,<span class="string">'InputBufferSize'</span>,<span class="number">10240</span>);</span><br><span class="line">data_all = [];</span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span></span><br><span class="line">    fopen(tcpclient);</span><br><span class="line">    fwrite(tcpclient,<span class="string">'yes'</span>);</span><br><span class="line">    <span class="keyword">while</span> ·</span><br><span class="line">        nBytes = get(tcpclient,<span class="string">'BytesAvailable'</span>);</span><br><span class="line">        <span class="keyword">if</span> nBytes&gt;<span class="number">0</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">end</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">    receive = fread(tcpclient,nBytes);<span class="comment">%读取tcp服务器</span></span><br><span class="line">    <span class="built_in">disp</span>(char(receive'));</span><br><span class="line">    fclose(tcpclient);</span><br><span class="line">    data=str2num(char(receive')); </span><br><span class="line">    data_all = [data_all,data];</span><br><span class="line">    pause(<span class="number">0.1</span>);</span><br><span class="line">    <span class="built_in">plot</span>(data_all)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">delete(tcpclient);</span><br></pre></td></tr></table></figure><p>结果：</p><p style="text-align:center">    <img src="sin.gif" width="60%"></p><h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3><blockquote><p><a href="https://blog.csdn.net/Darsome/article/details/106474161" target="_blank" rel="noopener">它终于来了！！！——Python向MATLAB传递数据</a></p><p><a href="https://www.cnblogs.com/xnlcc/p/10067731.html" target="_blank" rel="noopener">Matlab（Client）和Python（Server）进行TCP通信</a></p></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;在最近的项目中，MATLAB/Simulink需要用到Python语言搭建的深度学习算法检测结果进行仿真，在最简单的利用mat文件进行离线仿真的基础上，经过一系列的调研，决定使用TCP通信进行数据的传输。&lt;/p&gt;
+&lt;p&gt;以前通过一个简单的例子实现Python与Matlab的
+      
+    
+    </summary>
+    
+    
+    
+      <category term="开发" scheme="http://yoursite.com/tags/%E5%BC%80%E5%8F%91/"/>
+    
+      <category term="TCP" scheme="http://yoursite.com/tags/TCP/"/>
+    
+      <category term="Python" scheme="http://yoursite.com/tags/Python/"/>
+    
+      <category term="Matlab" scheme="http://yoursite.com/tags/Matlab/"/>
+    
+      <category term="Simulink" scheme="http://yoursite.com/tags/Simulink/"/>
+    
+  </entry>
   
   <entry>
     <title>深度学习 | Strip Pooling</title>
@@ -40,32 +73,6 @@
       <category term="深度学习" scheme="http://yoursite.com/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
     
       <category term="Pytorch" scheme="http://yoursite.com/tags/Pytorch/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>开发 | Docker</title>
-    <link href="http://yoursite.com/2020/06/03/%E5%BC%80%E5%8F%91_Docker/"/>
-    <id>http://yoursite.com/2020/06/03/%E5%BC%80%E5%8F%91_Docker/</id>
-    <published>2020-06-03T03:35:12.000Z</published>
-    <updated>2020-06-03T11:15:41.830Z</updated>
-    
-    <content type="html"><![CDATA[<p>Docker 是一个开源的应用容器引擎，基于 <a href="https://www.runoob.com/go/go-tutorial.html" target="_blank" rel="noopener">Go 语言</a> 并遵从 Apache2.0 协议开源。Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。</p><p>容器是完全使用沙箱机制，相互之间不会有任何接口（类似 iPhone 的 app）,更重要的是容器性能开销极低。</p><p>Docker容器的特点:</p><ul><li>轻量，在一台机器上运行的多个Docker容器可以共享这台机器的操作系统内核；它们能够迅速启动，只需占用很少的计算和内存资源。镜像是通过文件系统层进行构造的，并共享一些公共文件。这样就能尽量降低磁盘用量，并能更快地下载镜像。</li><li>标准，Docker容器基于开放式标准，能够在所有主流Linux版本、Microsoft Windows以及包括VM、裸机服务器和云在内的任何基础设施上运行。</li><li>安全，Docker赋予应用的隔离性不仅限于彼此隔离，还独立于底层的基础设施。Docker默认提供最强的隔离，因此应用出现问题，也只是单个容器的问题，而不会波及到整台机器。</li></ul><h3 id="docker基本概念"><a class="markdownIt-Anchor" href="#docker基本概念"></a> Docker基本概念</h3><h4 id="1-三个基本概念"><a class="markdownIt-Anchor" href="#1-三个基本概念"></a> 1. 三个基本概念：</h4><ul><li><p>镜像（Image）</p><p>操作系统分为内核和用户空间。对于Linux而言，内核启动后，会挂载root文件系统为其提供用户空间支持。而Docker镜像（Image），就相当于是一个root文件系统。</p><p>Docker镜像是一个<strong>特殊的文件系统</strong>，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）。 镜像不包含任何动态数据，其内容在构建之后也不会被改变。</p></li><li><p>容器（Container）</p><p>镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和实例一样，镜像是静态的定义，容器是<strong>镜像运行时的实体</strong>。容器可以被创建、启动、停止、删除、暂停等 。</p><p>容器的实质是进程，但与直接在宿主执行的进程不同，容器进程运行于属于自己的独立的命名空间。前面讲过镜像使用的是分层存储，容器也是如此。</p><p>容器存储层的生存周期和容器一样，容器消亡时，容器存储层也随之消亡。因此，任何保存于容器存储层的信息都会随容器删除而丢失。</p></li><li><p>仓库（Repository）</p><p><strong>集中存放镜像文件的地方</strong>，镜像构建完成后，可以很容易的在当前宿主上运行，但是， 如果需要在其它服务器上使用这个镜像，我们就需要一个集中的存储、分发镜像的服务，Docker Registry就是这样的服务。</p><p>通常，一个仓库会包含同一个软件不同版本的镜像，而标签就常用于对应该软件的各个版本 。我们可以通过<code>&lt;仓库名&gt;:&lt;标签&gt;</code>的格式来指定具体是这个软件哪个版本的镜像。如果不给出标签，将以<strong>latest</strong>作为默认标签，例如：<code>java:latest</code>。</p></li></ul><h4 id="2-buildshiprun"><a class="markdownIt-Anchor" href="#2-buildshiprun"></a> 2. Build，Ship，Run</h4><ul><li>Build（构建镜像）：镜像就像是集装箱包括文件以及运行环境等等资源。</li><li>Ship（运输镜像）：主机和仓库间运输，这里的仓库就像是超级码头一样。</li><li>Run （运行镜像）：运行的镜像就是一个容器，容器就是运行程序的地方。</li></ul><h3 id="docker安装"><a class="markdownIt-Anchor" href="#docker安装"></a> Docker安装</h3><h4 id="ubuntu1804"><a class="markdownIt-Anchor" href="#ubuntu1804"></a> Ubuntu18.04</h4><ul><li><p>安装依赖项</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common</span><br></pre></td></tr></table></figure></li><li><p>添加官方GPG公钥</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -</span><br></pre></td></tr></table></figure></li><li><p>设置稳定库</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"</span><br></pre></td></tr></table></figure></li><li><p>安装Docker Engine</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure></li><li><p>验证</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker version</span><br></pre></td></tr></table></figure></li></ul><h3 id="docker镜像使用"><a class="markdownIt-Anchor" href="#docker镜像使用"></a> Docker镜像使用</h3><h4 id="1docker镜像库"><a class="markdownIt-Anchor" href="#1docker镜像库"></a> 1.Docker镜像库</h4><p>可以替换为国内源：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/docker/daemon.json</span><br><span class="line"><span class="meta">#</span><span class="bash">添加</span></span><br><span class="line">&#123;</span><br><span class="line">"registry-mirrors": ["https://docker.mirrors.ustc.edu.cn/","https://hub-mirror.c.163.com","https://registry.docker-cn.com"],</span><br><span class="line">"insecure-registries": ["10.0.0.12:5000"]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">重启docker服务</span></span><br><span class="line">sudo service docker restart</span><br></pre></td></tr></table></figure><h4 id="2docker命令"><a class="markdownIt-Anchor" href="#2docker命令"></a> 2.Docker命令</h4><h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3><blockquote><p><a href="https://www.cnblogs.com/holaworld/p/12718538.html" target="_blank" rel="noopener">Docker在Ubuntu上安装与使用</a></p><p><a href="https://www.cnblogs.com/wang50902/p/11378202.html" target="_blank" rel="noopener">DOCKER镜像PULL不下来最终解决方法</a></p><p><a href="http://dockone.io/article/6051" target="_blank" rel="noopener">可能是把Docker的概念讲的最清楚的一篇文章</a></p></blockquote>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;Docker 是一个开源的应用容器引擎，基于 &lt;a href=&quot;https://www.runoob.com/go/go-tutorial.html&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Go 语言&lt;/a&gt; 并遵从 Apache2.0 协议开源。D
-      
-    
-    </summary>
-    
-    
-    
-      <category term="开发" scheme="http://yoursite.com/tags/%E5%BC%80%E5%8F%91/"/>
-    
-      <category term="Docker" scheme="http://yoursite.com/tags/Docker/"/>
     
   </entry>
   
@@ -98,6 +105,32 @@
       <category term="开发" scheme="http://yoursite.com/tags/%E5%BC%80%E5%8F%91/"/>
     
       <category term="远程" scheme="http://yoursite.com/tags/%E8%BF%9C%E7%A8%8B/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>开发 | Docker</title>
+    <link href="http://yoursite.com/2020/06/03/%E5%BC%80%E5%8F%91_Docker/"/>
+    <id>http://yoursite.com/2020/06/03/%E5%BC%80%E5%8F%91_Docker/</id>
+    <published>2020-06-03T03:35:12.000Z</published>
+    <updated>2020-06-03T11:15:41.830Z</updated>
+    
+    <content type="html"><![CDATA[<p>Docker 是一个开源的应用容器引擎，基于 <a href="https://www.runoob.com/go/go-tutorial.html" target="_blank" rel="noopener">Go 语言</a> 并遵从 Apache2.0 协议开源。Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。</p><p>容器是完全使用沙箱机制，相互之间不会有任何接口（类似 iPhone 的 app）,更重要的是容器性能开销极低。</p><p>Docker容器的特点:</p><ul><li>轻量，在一台机器上运行的多个Docker容器可以共享这台机器的操作系统内核；它们能够迅速启动，只需占用很少的计算和内存资源。镜像是通过文件系统层进行构造的，并共享一些公共文件。这样就能尽量降低磁盘用量，并能更快地下载镜像。</li><li>标准，Docker容器基于开放式标准，能够在所有主流Linux版本、Microsoft Windows以及包括VM、裸机服务器和云在内的任何基础设施上运行。</li><li>安全，Docker赋予应用的隔离性不仅限于彼此隔离，还独立于底层的基础设施。Docker默认提供最强的隔离，因此应用出现问题，也只是单个容器的问题，而不会波及到整台机器。</li></ul><h3 id="docker基本概念"><a class="markdownIt-Anchor" href="#docker基本概念"></a> Docker基本概念</h3><h4 id="1-三个基本概念"><a class="markdownIt-Anchor" href="#1-三个基本概念"></a> 1. 三个基本概念：</h4><ul><li><p>镜像（Image）</p><p>操作系统分为内核和用户空间。对于Linux而言，内核启动后，会挂载root文件系统为其提供用户空间支持。而Docker镜像（Image），就相当于是一个root文件系统。</p><p>Docker镜像是一个<strong>特殊的文件系统</strong>，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）。 镜像不包含任何动态数据，其内容在构建之后也不会被改变。</p></li><li><p>容器（Container）</p><p>镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和实例一样，镜像是静态的定义，容器是<strong>镜像运行时的实体</strong>。容器可以被创建、启动、停止、删除、暂停等 。</p><p>容器的实质是进程，但与直接在宿主执行的进程不同，容器进程运行于属于自己的独立的命名空间。前面讲过镜像使用的是分层存储，容器也是如此。</p><p>容器存储层的生存周期和容器一样，容器消亡时，容器存储层也随之消亡。因此，任何保存于容器存储层的信息都会随容器删除而丢失。</p></li><li><p>仓库（Repository）</p><p><strong>集中存放镜像文件的地方</strong>，镜像构建完成后，可以很容易的在当前宿主上运行，但是， 如果需要在其它服务器上使用这个镜像，我们就需要一个集中的存储、分发镜像的服务，Docker Registry就是这样的服务。</p><p>通常，一个仓库会包含同一个软件不同版本的镜像，而标签就常用于对应该软件的各个版本 。我们可以通过<code>&lt;仓库名&gt;:&lt;标签&gt;</code>的格式来指定具体是这个软件哪个版本的镜像。如果不给出标签，将以<strong>latest</strong>作为默认标签，例如：<code>java:latest</code>。</p></li></ul><h4 id="2-buildshiprun"><a class="markdownIt-Anchor" href="#2-buildshiprun"></a> 2. Build，Ship，Run</h4><ul><li>Build（构建镜像）：镜像就像是集装箱包括文件以及运行环境等等资源。</li><li>Ship（运输镜像）：主机和仓库间运输，这里的仓库就像是超级码头一样。</li><li>Run （运行镜像）：运行的镜像就是一个容器，容器就是运行程序的地方。</li></ul><h3 id="docker安装"><a class="markdownIt-Anchor" href="#docker安装"></a> Docker安装</h3><h4 id="ubuntu1804"><a class="markdownIt-Anchor" href="#ubuntu1804"></a> Ubuntu18.04</h4><ul><li><p>安装依赖项</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common</span><br></pre></td></tr></table></figure></li><li><p>添加官方GPG公钥</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -</span><br></pre></td></tr></table></figure></li><li><p>设置稳定库</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"</span><br></pre></td></tr></table></figure></li><li><p>安装Docker Engine</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure></li><li><p>验证</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker version</span><br></pre></td></tr></table></figure></li></ul><h3 id="docker镜像使用"><a class="markdownIt-Anchor" href="#docker镜像使用"></a> Docker镜像使用</h3><h4 id="1docker镜像库"><a class="markdownIt-Anchor" href="#1docker镜像库"></a> 1.Docker镜像库</h4><p>可以替换为国内源：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/docker/daemon.json</span><br><span class="line"><span class="meta">#</span><span class="bash">添加</span></span><br><span class="line">&#123;</span><br><span class="line">"registry-mirrors": ["https://docker.mirrors.ustc.edu.cn/","https://hub-mirror.c.163.com","https://registry.docker-cn.com"],</span><br><span class="line">"insecure-registries": ["10.0.0.12:5000"]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">重启docker服务</span></span><br><span class="line">sudo service docker restart</span><br></pre></td></tr></table></figure><h4 id="2docker命令"><a class="markdownIt-Anchor" href="#2docker命令"></a> 2.Docker命令</h4><h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3><blockquote><p><a href="https://www.cnblogs.com/holaworld/p/12718538.html" target="_blank" rel="noopener">Docker在Ubuntu上安装与使用</a></p><p><a href="https://www.cnblogs.com/wang50902/p/11378202.html" target="_blank" rel="noopener">DOCKER镜像PULL不下来最终解决方法</a></p><p><a href="http://dockone.io/article/6051" target="_blank" rel="noopener">可能是把Docker的概念讲的最清楚的一篇文章</a></p></blockquote>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;Docker 是一个开源的应用容器引擎，基于 &lt;a href=&quot;https://www.runoob.com/go/go-tutorial.html&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Go 语言&lt;/a&gt; 并遵从 Apache2.0 协议开源。D
+      
+    
+    </summary>
+    
+    
+    
+      <category term="开发" scheme="http://yoursite.com/tags/%E5%BC%80%E5%8F%91/"/>
+    
+      <category term="Docker" scheme="http://yoursite.com/tags/Docker/"/>
     
   </entry>
   
@@ -541,34 +574,6 @@
       <category term="路径规划" scheme="http://yoursite.com/tags/%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92/"/>
     
       <category term="算法" scheme="http://yoursite.com/tags/%E7%AE%97%E6%B3%95/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Dijkstra算法</title>
-    <link href="http://yoursite.com/2020/03/30/Dijkstra%E7%AE%97%E6%B3%95/"/>
-    <id>http://yoursite.com/2020/03/30/Dijkstra%E7%AE%97%E6%B3%95/</id>
-    <published>2020-03-30T01:11:56.000Z</published>
-    <updated>2020-04-19T06:48:48.514Z</updated>
-    
-    <content type="html"><![CDATA[<p>Dijkstra(迪杰斯特拉)算法是典型的单源最短路径算法，用于计算一个节点到其他所有节点的最短路径。主要特点是以起始点为中心向外层层扩展，直到扩展到终点为止。Dijkstra算法是很有代表性的最短路径算法，注意该算法要求图中<strong>不存在负权边</strong>。用于求图中指定两点之间的<strong>最短路径</strong>，或者是<strong>指定一点到其它</strong>所有点之间的最短路径。实质上是<strong>贪心算法</strong>。</p><p>Dijkstra算法可以说是BFS（宽度优先搜索算法）的升级版，BFS的实现可以依靠队列实现，而Dijkstra算法可以通过优先级队列进行实现。</p><p style="text-align:center">    <img src="2012073019540660.gif" width="30%"></p><h3 id="1-算法描述"><a class="markdownIt-Anchor" href="#1-算法描述"></a> 1. 算法描述</h3><p><strong>Dijkstra算法</strong>利用贪心策略，从起始点开始出发，选择距离当前位置最近的点加入路径。</p><p>因此算法用到两个集合：</p><ol><li>当前路径中已有点的集合</li><li>当前路径中未包含点的集合</li></ol><p>**原理：**Dijkstra的大致思想就是，根据初始点，挨个的把离初始点最近的点一个一个找到并加入集合，集合中所有的点的d[i]都是该点到初始点最短路径长度，由于后加入的点是根据集合S中的点为基础拓展的，所以也能找到最短路径。</p><p>1.将图上的初始点看作一个集合S，其它点看作另一个集合</p><p>2.根据初始点，求出其它点到初始点的距离d[i] （若相邻，则d[i]为边权值；若不相邻，则d[i]为无限大）</p><p>3.选取最小的d[i]（记为d[x]），并将此d[i]边对应的点（记为x）加入集合S</p><p>4.再根据x，更新跟 x 相邻点 y 的d[y]值：d[y] = min{ d[y], d[x] + 边权值w[x][y] }，因为可能把距离调小，所以这个更新操作叫做<strong>松弛操作</strong>。</p><p>5.重复3，4两步，直到目标点也加入了集合，此时目标点所对应的d[i]即为最短路径长度。</p><p>较好理解的视频：（用优先级队列实现）</p><p><a href="https://www.bilibili.com/video/BV1ts41157Sy?from=search&amp;seid=18117383376943679146" target="_blank" rel="noopener">https://www.bilibili.com/video/BV1ts41157Sy?from=search&amp;seid=18117383376943679146</a></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;Dijkstra(迪杰斯特拉)算法是典型的单源最短路径算法，用于计算一个节点到其他所有节点的最短路径。主要特点是以起始点为中心向外层层扩展，直到扩展到终点为止。Dijkstra算法是很有代表性的最短路径算法，注意该算法要求图中&lt;strong&gt;不存在负权边&lt;/strong&gt;。
-      
-    
-    </summary>
-    
-    
-    
-      <category term="路径规划" scheme="http://yoursite.com/tags/%E8%B7%AF%E5%BE%84%E8%A7%84%E5%88%92/"/>
-    
-      <category term="算法" scheme="http://yoursite.com/tags/%E7%AE%97%E6%B3%95/"/>
-    
-      <category term="Dijkstra" scheme="http://yoursite.com/tags/Dijkstra/"/>
     
   </entry>
   
