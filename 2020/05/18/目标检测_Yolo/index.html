@@ -1,11 +1,8 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="zilch"><title>目标检测 | Yolo · zilch个人博客</title><meta name="description" content="YOLO的全拼是You Only Look Once，顾名思义就是只看一次，把目标区域预测和目标类别预测合二为一，该方法采用单个神经网络直接预测物品边界和类别概率，实现端到端的物品检测。
- Yolo v1
-这是YOLO系列的第一篇，文章发表在CVPR2016上，论文链接:YOLOV1.
-摘要指出了文"><meta name="keywords" content="博客,Hexo,车辆工程,Linux"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.bootcss.com/KaTeX/0.7.1/katex.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 4.2.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">zilch个人博客</a></h3><div class="description"><p>言念君子，温其如玉</p></div></div></div><ul class="social-links"><li><a href="https://github.com/hezl1592" target="_blank" rel="noopener"><i class="fa fa-github"></i></a></li><p><a href="https://github.com/hezl1592" target="_blank" rel="noopener"><img src="https://ghchart.rshah.org/hezl1592" width="70%"></a></p></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a href="https://www.caicai.me" target="_blank" rel="noopener"> CaiCai </a><span>&</span><a href="https://github.com/Ben02/hexo-theme-Anatole" target="_blank" rel="noopener"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/tags">标签</a></li><li><a href="/about">关于</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img src="/images/favicon.png"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>目标检测 | Yolo</a></h3></div><div class="post-content"><p>YOLO的全拼是You Only Look Once，顾名思义就是只看一次，把目标区域预测和目标类别预测合二为一，该方法采用单个神经网络直接预测物品边界和类别概率，实现端到端的物品检测。</p>
-<h3 id="yolo-v1"><a class="markdownIt-Anchor" href="#yolo-v1"></a> Yolo v1</h3>
-<p>这是YOLO系列的第一篇，文章发表在CVPR2016上，论文链接:<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf" target="_blank" rel="noopener">YOLOV1</a>.</p>
-<p>摘要指出了文章的主要创新之处：把分类问题转换为回归问题，使用一个卷积神经网络就可以直接预测物体的bounding box和类别概率。<br>
-算法的优点有很多：</p>
+Yolo v1这是YOLO系列的第一篇，文章发表在CVPR2016上，论文链接:YOLOV1.
+摘要指出了文章的"><meta name="keywords" content="博客,Hexo,车辆工程,Linux"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.bootcss.com/KaTeX/0.7.1/katex.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 4.2.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">zilch个人博客</a></h3><div class="description"><p>言念君子，温其如玉</p></div></div></div><ul class="social-links"><li><a href="https://github.com/hezl1592" target="_blank" rel="noopener"><i class="fa fa-github"></i></a></li><p><a href="https://github.com/hezl1592" target="_blank" rel="noopener"><img src="https://ghchart.rshah.org/hezl1592" width="70%"></a></p></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a href="https://www.caicai.me" target="_blank" rel="noopener"> CaiCai </a><span>&</span><a href="https://github.com/Ben02/hexo-theme-Anatole" target="_blank" rel="noopener"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/archives">归档</a></li><li><a href="/tags">标签</a></li><li><a href="/about">关于</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img src="/images/favicon.png"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>目标检测 | Yolo</a></h3></div><div class="post-content"><p>YOLO的全拼是You Only Look Once，顾名思义就是只看一次，把目标区域预测和目标类别预测合二为一，该方法采用单个神经网络直接预测物品边界和类别概率，实现端到端的物品检测。</p>
+<h3 id="Yolo-v1"><a href="#Yolo-v1" class="headerlink" title="Yolo v1"></a>Yolo v1</h3><p>这是YOLO系列的第一篇，文章发表在CVPR2016上，论文链接:<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Redmon_You_Only_Look_CVPR_2016_paper.pdf" target="_blank" rel="noopener">YOLOV1</a>.</p>
+<p>摘要指出了文章的主要创新之处：把分类问题转换为回归问题，使用一个卷积神经网络就可以直接预测物体的bounding box和类别概率。<br> 算法的优点有很多：</p>
 <ol>
 <li>速度快，Titan X: 45fps。加速版则能达到150fps。</li>
 <li>基于全局信息检测而不是生成region proposal的方法，可以将背景误检率降低一半（把背景识别成物体）。</li>
@@ -14,21 +11,25 @@
 <p style="text-align:center">
     <img src="yolov1.jpg" alt width="60%">
 </p>
+
 <p style="text-align:center">
     <img src="yolov1_1.jpg" alt width="60%">
 </p>
-<h3 id="yolo-v2"><a class="markdownIt-Anchor" href="#yolo-v2"></a> Yolo v2</h3>
-<p style="text-align:center">
+
+
+
+<h3 id="Yolo-v2"><a href="#Yolo-v2" class="headerlink" title="Yolo v2"></a>Yolo v2</h3><p style="text-align:center">
     <img src="yolov2.jpg" alt width="60%">
 </p>
-<h3 id="yolo-v3"><a class="markdownIt-Anchor" href="#yolo-v3"></a> Yolo v3</h3>
-<p style="text-align:center">
+
+<h3 id="Yolo-v3"><a href="#Yolo-v3" class="headerlink" title="Yolo v3"></a>Yolo v3</h3><p style="text-align:center">
     <img src="yolov3.jpg" alt width="60%">
 </p>
-<h3 id="yolo-v4"><a class="markdownIt-Anchor" href="#yolo-v4"></a> Yolo v4</h3>
-<p style="text-align:center">
+
+<h3 id="Yolo-v4"><a href="#Yolo-v4" class="headerlink" title="Yolo v4"></a>Yolo v4</h3><p style="text-align:center">
     <img src="yolov4.jpg" alt width="60%">
 </p>
+
 <ol>
 <li>主干特征提取网络：DarkNet53 =&gt; CSPDarkNet53</li>
 <li>特征金字塔：SPP，PANet</li>
@@ -36,8 +37,7 @@
 <li>训练用到的小技巧：Mosaic数据增强、Label Smoothing平滑、CIOU、学习率余弦退火衰减</li>
 <li>激活函数：使用Mish激活函数</li>
 </ol>
-<h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考：</h3>
-<blockquote>
+<h3 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h3><blockquote>
 <p><a href="https://www.jianshu.com/p/a1e618795b29" target="_blank" rel="noopener">12.YOLO系列算法详解1:YOLOV1</a></p>
 </blockquote>
 </div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2020-05-18</span><i class="fa fa-tag"></i><a class="tag" href="/tags/深度学习/" title="深度学习">深度学习 </a><a class="tag" href="/tags/目标检测/" title="目标检测">目标检测 </a><a class="tag" href="/tags/Yolo/" title="Yolo">Yolo </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" href="http://twitter.com/home?status=,http://yoursite.com/2020/05/18/目标检测_Yolo/,zilch个人博客,目标检测 | Yolo,;" target="_blank" rel="noopener"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a class="btn" role="navigation" href="/2020/06/03/%E5%BC%80%E5%8F%91_vscode%E8%BF%9C%E7%A8%8B%E5%BC%80%E5%8F%91/" title="开发 | VScode远程开发">上一篇</a></li><li class="next pagbuttons"><a class="btn" role="navigation" href="/2020/05/12/%E6%9C%89%E9%99%90%E7%8A%B6%E6%80%81%E6%9C%BA/" title="有限状态机">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
